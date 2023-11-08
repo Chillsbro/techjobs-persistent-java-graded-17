@@ -1,6 +1,7 @@
 package org.launchcode.techjobs.persistent.controllers;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.launchcode.techjobs.persistent.models.Employer;
 import org.launchcode.techjobs.persistent.models.Job;
 import org.launchcode.techjobs.persistent.models.Skill;
@@ -34,6 +35,8 @@ public class HomeController {
     public String index(Model model) {
 
         model.addAttribute("title", "MyJobs");
+        List jobs = (List<Job>) jobRepository.findAll();
+        model.addAttribute("jobs",jobs);
 
         return "index";
     }
@@ -42,8 +45,10 @@ public class HomeController {
     public String displayAddJobForm(Model model) {
 	model.addAttribute("title", "Add Job");
         model.addAttribute(new Job());
-        model.addAttribute("employers",employerRepository.findAll());
-        model.addAttribute("skills", skillRepository.findAll());
+        List employers = (List<Employer>) employerRepository.findAll();
+        List skills = (List<Skill>) skillRepository.findAll();
+        model.addAttribute("employers",employers);
+        model.addAttribute("skills", skills);
 
         return "add";
     }
@@ -51,7 +56,7 @@ public class HomeController {
     @PostMapping("add")
     public String processAddJobForm(@ModelAttribute @Valid Job newJob,
                                        Errors errors, Model model, @RequestParam int employerId,
-    @RequestParam List<Integer> skills) {
+    @RequestParam @Valid List<Integer> skills) {
 
         if (errors.hasErrors()) {
 	    model.addAttribute("title", "Add Job");
@@ -59,14 +64,15 @@ public class HomeController {
         }
         Optional<Employer> optionalEmployer = employerRepository.findById(employerId);
         if(optionalEmployer.isPresent()){
-            Employer employer = (Employer) optionalEmployer.get();
+            Employer employer = optionalEmployer.get();
             newJob.setEmployer(employer);
         }
 
         model.addAttribute("employers",employerRepository.findById(employerId));
 
-        List<Skill> skillObjs = (List<Skill>) skillRepository.findAllById(skills);
-        newJob.setSkills(skillObjs);
+            List<Skill> skillObjs = (List<Skill>) skillRepository.findAllById(skills);
+            newJob.setSkills(skillObjs);
+
 
         jobRepository.save(newJob);
 
@@ -78,7 +84,7 @@ public class HomeController {
     public String displayViewJob(Model model, @PathVariable int jobId) {
         Optional<Job> optjob = jobRepository.findById(jobId);
             if (optjob.isPresent()) {
-                Job job = (Job) optjob.get();
+                Job job = optjob.get();
                 model.addAttribute("jobs", job);
                 return "view";
             } else {

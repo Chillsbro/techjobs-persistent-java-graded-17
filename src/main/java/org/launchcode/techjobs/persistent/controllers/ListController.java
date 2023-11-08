@@ -1,5 +1,6 @@
 package org.launchcode.techjobs.persistent.controllers;
 
+import jakarta.validation.constraints.NotNull;
 import org.launchcode.techjobs.persistent.models.Job;
 import org.launchcode.techjobs.persistent.models.data.EmployerRepository;
 import org.launchcode.techjobs.persistent.models.data.JobRepository;

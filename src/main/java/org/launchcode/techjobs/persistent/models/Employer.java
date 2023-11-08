@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 public class Employer extends AbstractEntity {
     @NotBlank
-    @Size(max=25,message="Location cannot be more than 25 characters in length")
+    @Size(max=75,message="Location cannot be more than 75 characters in length")
     private String location;
 
     @OneToMany
@@ -21,6 +21,11 @@ public class Employer extends AbstractEntity {
 
     public Employer(){}
 
+    public Employer (String location) {
+        super();
+        this.location = location;
+    }
+
     public String getLocation() {
         return location;
     }
@@ -28,4 +33,5 @@ public class Employer extends AbstractEntity {
     public void setLocation(String location) {
         this.location = location;
     }
+
 }
